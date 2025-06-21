@@ -1,0 +1,347 @@
+Azure DevOps
+
+
+
+SP.NET Core Web API project with CICD action using GitHub Actions step by step with code?
+
+
+ChatGPT said:
+Here's a step-by-step guide to set up a complete ASP.NET Core Web API project with a CI/CD pipeline using GitHub Actions, including the code and deployment to Azure App Service.
+
+✅ What You’ll Get
+🧱 ASP.NET Core Web API Project Sample
+
+🔁 GitHub Actions Workflow (.yml) to:
+
+Restore, build, test, publish, and deploy
+
+🔐 Azure Publish Profile for secure deployment
+
+📄 Full instructions for each step
+
+🧱 1. Sample ASP.NET Core Web API Project
+Create your project:
+
+bash
+Copy
+Edit
+dotnet new webapi -n SampleApi
+cd SampleApi
+Add a simple controller:
+
+csharp
+Copy
+Edit
+// Controllers/HelloController.cs
+using Microsoft.AspNetCore.Mvc;
+
+[ApiController]
+[Route("[controller]")]
+public class HelloController : ControllerBase
+{
+    [HttpGet]
+    public string Get() => "Hello from CI/CD Web API!";
+}
+🛠 2. Push Your Project to GitHub
+Create a new repository on GitHub (e.g., SampleApi)
+
+Initialize Git locally and push:
+
+bash
+Copy
+Edit
+git init
+git remote add origin https://github.com/<your-username>/SampleApi.git
+git add .
+git commit -m "Initial commit"
+git push -u origin main
+☁️ 3. Create Azure App Service + Download Publish Profile
+Go to Azure Portal > App Services > + Create
+
+Stack: .NET 8, App Name: sample-api-cicd, Region: any
+
+Once created, go to Overview > Get Publish Profile
+
+Save the .PublishSettings file
+
+Copy its contents (open in Notepad)
+
+🔐 4. Add GitHub Secrets
+Go to your GitHub repo → Settings > Secrets and variables > Actions
+
+Add two secrets:
+
+Name	Value
+AZURE_WEBAPP_NAME	sample-api-cicd
+AZURE_WEBAPP_PUBLISH_PROFILE	Paste contents of .PublishSettings
+
+🌀 5. Create GitHub Actions Workflow
+Create the file:
+📄 .github/workflows/deploy.yml
+
+yaml
+Copy
+Edit
+name: Build and Deploy ASP.NET Core Web API
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET Core SDK
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration Release
+
+    - name: Publish
+      run: dotnet publish -c Release -o ./publish
+
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: ./publish
+🧪 6. Trigger CI/CD
+Push any changes to main branch:
+
+bash
+Copy
+Edit
+git add .
+git commit -m "Trigger CI/CD"
+git push
+GitHub Actions will:
+✅ Build
+✅ Publish
+✅ Deploy to Azure App Service
+
+Visit:
+🔗 https://<your-app-name>.azurewebsites.net/hello
+
+📁 Bonus – Folder Structure
+Copy
+Edit
+SampleApi/
+│
+├── Controllers/
+│   └── HelloController.cs
+├── .github/
+│   └── workflows/
+│       └── deploy.yml
+├── SampleApi.csproj
+└── Program.cs
+📎 Optional Add-ons
+Would you like me to send:
+
+✅ Downloadable full ZIP with working project + .yml
+
+📄 PDF deployment steps with screenshots?
+
+🧪 Add unit tests, Swagger, Docker, or health checks?
+
+
+************************Complete Step-by-Step Guide for Deploying ASP.NET Core Web API to Azure App Service using GitHub Actions
+
+🚀 Project Overview
+
+This guide demonstrates how to deploy an ASP.NET Core Web API to Azure App Service using a fully automated CI/CD pipeline with GitHub Actions.
+
+📊 Technologies Used:
+
+.NET 8 Web API
+
+Azure App Service
+
+GitHub Actions
+
+📗 Step 1: Create ASP.NET Core Web API Project
+
+Option A: Download Ready ZIP
+
+Download: SampleApiWithCI.zip (includes project + GitHub Actions workflow)
+
+Option B: Create Manually
+
+dotnet new webapi -n SampleApi
+cd SampleApi
+
+Create HelloController.cs:
+
+[ApiController]
+[Route("[controller]")]
+public class HelloController : ControllerBase
+{
+    [HttpGet]
+    public string Get() => "Hello from CI/CD Web API!";
+}
+
+✨ Step 2: Push Project to GitHub
+
+Create a repo (e.g., SampleApi) on GitHub
+
+Initialize Git and push:
+
+git init
+git remote add origin https://github.com/<your-username>/SampleApi.git
+git add .
+git commit -m "Initial commit"
+git push -u origin main
+
+☁️ Step 3: Create Azure App Service
+
+Go to Azure Portal > App Services > + Create
+
+Fill in:
+
+Name: sample-api-cicd
+
+Runtime stack: .NET 8
+
+OS: Windows or Linux
+
+Create and wait for deployment to finish
+
+🔑 Step 4: Get Azure Publish Profile
+
+Go to the Azure App Service you just created
+
+Click Get publish profile in the Overview tab
+
+Download .PublishSettings file
+
+Open it and copy its full contents
+
+🔐 Step 5: Add Secrets in GitHub
+
+Go to your GitHub repo
+
+Navigate to Settings > Secrets and Variables > Actions
+
+Add the following:
+
+Secret Name
+
+Value (example)
+
+AZURE_WEBAPP_NAME
+
+sample-api-cicd
+
+AZURE_WEBAPP_PUBLISH_PROFILE
+
+Paste entire publish profile XML
+
+🌀 Step 6: Create GitHub Actions Workflow
+
+Create this file:
+.github/workflows/deploy.yml
+
+name: Build and Deploy ASP.NET Core Web API
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET Core SDK
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration Release
+
+    - name: Publish
+      run: dotnet publish -c Release -o ./publish
+
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: ./publish
+
+🚗 Step 7: Trigger the CI/CD Pipeline
+
+Any push to main will now automatically:
+
+Restore
+
+Build
+
+Publish
+
+Deploy to Azure
+
+git add .
+git commit -m "Trigger CI/CD"
+git push
+
+🌐 Step 8: Test the Deployed API
+
+Navigate to:
+
+https://sample-api-cicd.azurewebsites.net/hello
+
+Expected Output:
+
+Hello from CI/CD Web API!
+
+📅 Bonus Tips
+
+Task
+
+Tool / Step
+
+Restart app
+
+Azure Portal > App Service > Restart
+
+Enable Application Insights
+
+Azure App > Monitoring > Enable Insights
+
+Add custom domain
+
+Azure App > Custom Domains
+
+Monitor logs
+
+Azure App > Log stream
+
+Let me know if you'd like a version of this with:
+
+Swagger UI
+
+Health checks
+
+Docker support
+
+PDF with screenshots
