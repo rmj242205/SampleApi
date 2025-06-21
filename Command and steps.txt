@@ -198,10 +198,61 @@ Create a repo (e.g., SampleApi) on GitHub
 Initialize Git and push:
 
 git init
-git remote add origin https://github.com/<your-username>/SampleApi.git
+git remote add origin https://github.com/rmj242205/SampleApi.git
 git add .
 git commit -m "Initial commit"
 git push -u origin main
+
+***********************************************Fix error
+D:\Project\SampleApiWithCI>git push -u origin main
+error: src refspec main does not match any
+error: failed to push some refs to 'https://github.com/rmj242205/SampleApi.git'
+Fixing the Issue
+1. You're probably still on the default branch (e.g., master)
+Check your current branch:
+
+bash
+Copy
+Edit
+git branch
+If it shows:
+
+markdown
+Copy
+Edit
+* master
+Rename it to main (GitHub default):
+
+bash
+Copy
+Edit
+git branch -m main
+2. Re-add, commit, and push
+bash
+Copy
+Edit
+git add .
+git commit -m "Initial commit"
+git push -u origin main
+✅ You Should See:
+less
+Copy
+Edit
+Enumerating objects: ...
+Counting objects: ...
+...
+To https://github.com/rmj242205/SampleApi.git
+ * [new branch]      main -> main
+Once pushed, GitHub Actions will auto-trigger based on your .github/workflows/deploy.yml.
+
+Let me know if you want me to:
+
+Verify .gitignore or
+
+Add README.md and basic Git project setup
+
+
+
 
 ☁️ Step 3: Create Azure App Service
 
@@ -217,6 +268,8 @@ OS: Windows or Linux
 
 Create and wait for deployment to finish
 
+
+
 🔑 Step 4: Get Azure Publish Profile
 
 Go to the Azure App Service you just created
@@ -226,6 +279,7 @@ Click Get publish profile in the Overview tab
 Download .PublishSettings file
 
 Open it and copy its full contents
+
 
 🔐 Step 5: Add Secrets in GitHub
 
@@ -246,6 +300,39 @@ sample-api-cicd
 AZURE_WEBAPP_PUBLISH_PROFILE
 
 Paste entire publish profile XML
+
+*************************
+What is “Paste the full XML of publish profile”?
+When you download the Publish Profile from Azure App Service (Step 4), it comes as a .PublishSettings file. This file is an XML file that contains your app credentials and settings for deployment.
+
+📄 Example of a Publish Profile (XML):
+xml
+Copy
+Edit
+<?xml version="1.0" encoding="utf-8"?>
+<publishData>
+  <publishProfile profileName="sample-api-cicd - Web Deploy"
+      publishMethod="MSDeploy"
+      publishUrl="sample-api-cicd.scm.azurewebsites.net:443"
+      msdeploySite="sample-api-cicd"
+      userName="$sample-api-cicd"
+      userPWD="g4h1XXXXXXXXXXXXXX=="
+      destinationAppUrl="https://sample-api-cicd.azurewebsites.net"
+      />
+</publishData>
+📥 How to Use This in GitHub Secrets
+Open the .PublishSettings file you downloaded in Notepad or VS Code
+
+Copy everything inside (the full XML as above)
+
+Go to your GitHub repo → Settings → Secrets and variables → Actions
+
+Click “New repository secret”
+
+Name it AZURE_WEBAPP_PUBLISH_PROFILE
+
+Paste the XML as the value
+******************************************************************************
 
 🌀 Step 6: Create GitHub Actions Workflow
 
